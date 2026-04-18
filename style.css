@@ -4,8 +4,8 @@
    REPLACE THESE 3 VALUES
 =========================== */
 
-const AIRTABLE_TOKEN = "PASTE_YOUR_AIRTABLE_TOKEN";
-const BASE_ID = "PASTE_YOUR_BASE_ID";
+const AIRTABLE_TOKEN = "patkY08D4GmFWAd0r";
+const BASE_ID = "appTZbHaT7Ippo5wP";
 const PRODUCTS_TABLE = "Products";
 const ORDERS_TABLE = "Orders";
 
