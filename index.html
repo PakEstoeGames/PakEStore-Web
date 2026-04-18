@@ -1,1 +1,166 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Pak E Store</title>
+<meta name="description" content="Premium Gaming HDD Store">
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<!-- HEADER -->
+<header class="topbar">
+
+<div class="logoArea">
+<h1>Pak E Store</h1>
+<p>Premium Gaming HDD Store</p>
+</div>
+
+<a href="#products" class="shopBtn">Shop Now</a>
+
+</header>
+
+<!-- HERO -->
+
+<section class="hero">
+
+<div class="heroText">
+<h2>All Games Preloaded Hard Drives</h2>
+<p>
+Portable & Internal HDD with latest games collection.
+Fast Delivery All Pakistan.
+</p>
+
+<a href="#products" class="heroBtn">Explore Products</a>
+</div>
+
+<div class="heroImage">
+<img src="hero.jpg" alt="Gaming HDD">
+</div>
+
+</section>
+
+<!-- FEATURES -->
+
+<section class="features">
+
+<div class="featureCard">
+🚚<span>Fast Delivery</span>
+</div>
+
+<div class="featureCard">
+💾<span>Latest Games</span>
+</div>
+
+<div class="featureCard">
+💬<span>WhatsApp Support</span>
+</div>
+
+</section>
+
+<!-- PRODUCTS -->
+
+<section class="productsSection" id="products">
+
+<div class="sectionHead">
+<h2>Featured Products</h2>
+<p>Choose your required storage</p>
+</div>
+
+<!-- Airtable Products Auto Load Here -->
+<div id="productsGrid" class="productsGrid">
+
+<!-- Product Cards From script.js -->
+
+</div>
+
+</section>
+
+<!-- WHY US -->
+
+<section class="whyUs">
+
+<h2>Why Choose Us?</h2>
+
+<div class="whyGrid">
+
+<div class="whyCard">
+🎮 Huge Games Library
+</div>
+
+<div class="whyCard">
+⚡ Fast Copy Speed
+</div>
+
+<div class="whyCard">
+🛡 Safe Packing
+</div>
+
+<div class="whyCard">
+📱 Easy Ordering
+</div>
+
+</div>
+
+</section>
+
+<!-- ORDER POPUP -->
+
+<div id="orderModal" class="modal">
+
+<div class="modalBox">
+
+<div class="modalHead">
+<h3>Place Order</h3>
+<span onclick="closeOrder()">✕</span>
+</div>
+
+<input type="text" id="custName" placeholder="Full Name">
+
+<input type="text" id="custPhone" placeholder="Mobile Number">
+
+<textarea id="custAddress" placeholder="Complete Address"></textarea>
+
+<div id="selectedProductInfo"></div>
+
+<button class="mainBtn" onclick="submitOrder()">
+Confirm Order
+</button>
+
+</div>
+
+</div>
+
+<!-- CUSTOM POPUP -->
+
+<div id="popup" class="popup">
+
+<div class="popupBox">
+
+<p id="popupText"></p>
+
+<button onclick="closePopup()">OK</button>
+
+</div>
+
+</div>
+
+<!-- FOOTER -->
+
+<footer class="footer">
+
+<p>© 2026 Pak E Store - All Rights Reserved</p>
+
+<a href="https://wa.me/923262281245" target="_blank">
+WhatsApp Support
+</a>
+
+</footer>
+
+<script src="script.js"></script>
+
+</body>
+</html>
