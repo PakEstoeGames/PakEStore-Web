@@ -1,378 +1,258 @@
-/* style.css - Pak E Store Premium Shopify Style */
+/* script.js - Airtable Connected Final */
 
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-scroll-behavior:smooth;
+/* ===========================
+   REPLACE THESE 3 VALUES
+=========================== */
+
+const AIRTABLE_TOKEN = "PASTE_YOUR_AIRTABLE_TOKEN";
+const BASE_ID = "PASTE_YOUR_BASE_ID";
+const PRODUCTS_TABLE = "Products";
+const ORDERS_TABLE = "Orders";
+
+/* =========================== */
+
+let selectedProduct = null;
+
+/* On Load */
+
+window.onload = function(){
+loadProducts();
+showPopup("Welcome to Pak E Store");
+};
+
+/* Load Products From Airtable */
+
+async function loadProducts(){
+
+const url =
+`https://api.airtable.com/v0/${BASE_ID}/${PRODUCTS_TABLE}`;
+
+try{
+
+const res = await fetch(url,{
+headers:{
+Authorization:`Bearer ${AIRTABLE_TOKEN}`
+}
+});
+
+const data = await res.json();
+
+renderProducts(data.records);
+
+}catch(error){
+
+showPopup("Products Failed To Load");
+
 }
 
-body{
-font-family:Arial, sans-serif;
-background:#f5f5f7;
-color:#111;
 }
 
-/* HEADER */
+/* Render Products */
 
-.topbar{
-display:flex;
-justify-content:space-between;
-align-items:center;
-padding:18px 20px;
-background:#fff;
-position:sticky;
-top:0;
-z-index:1000;
-box-shadow:0 2px 10px rgba(0,0,0,0.05);
+function renderProducts(records){
+
+let html = "";
+
+for(let i=0;i<records.length;i++){
+
+const item = records[i].fields;
+
+if(item.Active !== true) continue;
+
+let img = "hero.jpg";
+
+if(item.Images && item.Images.length > 0){
+img = item.Images[0].url;
 }
 
-.logoArea h1{
-font-size:26px;
-font-weight:700;
+html += `
+<div class="productCard">
+
+<img src="${img}" class="productImg">
+
+<div class="productBody">
+
+<div class="productTitle">
+${item.Storage} ${item.Type}
+</div>
+
+<div class="productDesc">
+${item.Description || "Gaming HDD Ready To Use"}
+</div>
+
+<div class="productPrice">
+Rs ${item.Price}
+</div>
+
+<button class="buyBtn"
+onclick="openOrder(
+'${item.Storage}',
+'${item.Type}',
+'${item.Price}'
+)">
+Buy Now
+</button>
+
+</div>
+</div>
+`;
+
 }
 
-.logoArea p{
-font-size:13px;
-color:#777;
-margin-top:3px;
+document.getElementById("productsGrid").innerHTML = html;
+
 }
 
-.shopBtn{
-text-decoration:none;
-background:#0071e3;
-color:#fff;
-padding:10px 16px;
-border-radius:12px;
-font-size:14px;
-font-weight:600;
+/* Open Order */
+
+function openOrder(storage,type,price){
+
+selectedProduct = {
+storage:storage,
+type:type,
+price:price
+};
+
+document.getElementById("selectedProductInfo").innerHTML = `
+<b>Selected Product:</b><br>
+${storage} ${type}<br>
+Price: Rs ${price}
+`;
+
+document.getElementById("orderModal").style.display = "flex";
+
 }
 
-/* HERO */
+/* Close Order */
 
-.hero{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:20px;
-padding:35px 20px;
-align-items:center;
+function closeOrder(){
+document.getElementById("orderModal").style.display = "none";
 }
 
-.heroText h2{
-font-size:38px;
-line-height:1.2;
-margin-bottom:15px;
+/* Submit Order */
+
+async function submitOrder(){
+
+const name =
+document.getElementById("custName").value.trim();
+
+const phone =
+document.getElementById("custPhone").value.trim();
+
+const address =
+document.getElementById("custAddress").value.trim();
+
+if(name.length < 3){
+showPopup("Please Enter Full Name");
+return;
 }
 
-.heroText p{
-font-size:16px;
-color:#555;
-line-height:1.7;
-margin-bottom:18px;
+if(phone.length < 11){
+showPopup("Please Enter Valid Phone Number");
+return;
 }
 
-.heroBtn{
-display:inline-block;
-text-decoration:none;
-background:#111;
-color:#fff;
-padding:14px 22px;
-border-radius:14px;
-font-size:15px;
-font-weight:600;
+if(address.length < 10){
+showPopup("Please Enter Complete Address");
+return;
 }
 
-.heroImage img{
-width:100%;
-border-radius:22px;
-object-fit:cover;
+if(!selectedProduct){
+showPopup("No Product Selected");
+return;
 }
 
-/* FEATURES */
+/* Save Order In Airtable */
 
-.features{
-display:grid;
-grid-template-columns:repeat(3,1fr);
-gap:15px;
-padding:0 20px 25px;
+await saveOrderToAirtable(
+name,
+phone,
+address,
+selectedProduct.storage + " " + selectedProduct.type,
+selectedProduct.price
+);
+
+/* WhatsApp Message */
+
+let msg = "🛒 NEW ORDER RECEIVED%0A%0A";
+
+msg += "👤 Name: " + name + "%0A";
+msg += "📱 Phone: " + phone + "%0A";
+msg += "📍 Address: " + address + "%0A%0A";
+
+msg += "💽 Product: " +
+selectedProduct.storage + " " +
+selectedProduct.type + "%0A";
+
+msg += "💰 Price: Rs " +
+selectedProduct.price;
+
+window.open(
+"https://wa.me/923262281245?text=" + msg,
+"_blank"
+);
+
+closeOrder();
+
 }
 
-.featureCard{
-background:#fff;
-padding:16px;
-border-radius:18px;
-text-align:center;
-font-size:24px;
-box-shadow:0 4px 15px rgba(0,0,0,0.04);
+/* Save To Airtable */
+
+async function saveOrderToAirtable(
+name,
+phone,
+address,
+product,
+amount
+){
+
+const url =
+`https://api.airtable.com/v0/${BASE_ID}/${ORDERS_TABLE}`;
+
+const body = {
+records:[
+{
+fields:{
+Name:name,
+Phone:phone,
+Address:address,
+Product:product,
+Amount:Number(amount),
+Date:new Date().toLocaleString()
+}
+}
+]
+};
+
+try{
+
+await fetch(url,{
+method:"POST",
+headers:{
+Authorization:`Bearer ${AIRTABLE_TOKEN}`,
+"Content-Type":"application/json"
+},
+body:JSON.stringify(body)
+});
+
+}catch(error){
+console.log("Order Save Failed");
 }
 
-.featureCard span{
-display:block;
-font-size:14px;
-margin-top:8px;
-font-weight:600;
 }
 
-/* SECTION HEAD */
+/* Popup */
 
-.sectionHead{
-padding:0 20px 18px;
+function showPopup(text){
+
+document.getElementById("popupText").innerText = text;
+
+document.getElementById("popup").style.display = "flex";
+
 }
 
-.sectionHead h2{
-font-size:30px;
-margin-bottom:5px;
-}
+function closePopup(){
 
-.sectionHead p{
-font-size:15px;
-color:#666;
-}
-
-/* PRODUCTS */
-
-.productsGrid{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-gap:20px;
-padding:0 20px 40px;
-}
-
-.productCard{
-background:#fff;
-border-radius:22px;
-overflow:hidden;
-box-shadow:0 8px 25px rgba(0,0,0,0.06);
-transition:0.25s;
-}
-
-.productCard:hover{
-transform:translateY(-5px);
-}
-
-.productImg{
-width:100%;
-height:240px;
-object-fit:cover;
-}
-
-.productBody{
-padding:18px;
-}
-
-.productTitle{
-font-size:22px;
-font-weight:700;
-margin-bottom:6px;
-}
-
-.productDesc{
-font-size:14px;
-color:#666;
-line-height:1.6;
-margin-bottom:10px;
-min-height:42px;
-}
-
-.productPrice{
-font-size:22px;
-font-weight:700;
-margin-bottom:14px;
-}
-
-.buyBtn{
-width:100%;
-padding:14px;
-border:none;
-background:#0071e3;
-color:#fff;
-border-radius:14px;
-font-size:15px;
-font-weight:700;
-cursor:pointer;
-}
-
-/* WHY US */
-
-.whyUs{
-padding:10px 20px 45px;
-}
-
-.whyUs h2{
-font-size:28px;
-margin-bottom:20px;
-}
-
-.whyGrid{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-gap:15px;
-}
-
-.whyCard{
-background:#fff;
-padding:18px;
-border-radius:18px;
-font-size:16px;
-font-weight:600;
-box-shadow:0 4px 15px rgba(0,0,0,0.04);
-}
-
-/* MODAL */
-
-.modal{
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:rgba(0,0,0,0.45);
-display:none;
-justify-content:center;
-align-items:center;
-z-index:9999;
-padding:15px;
-}
-
-.modalBox{
-background:#fff;
-width:100%;
-max-width:420px;
-padding:22px;
-border-radius:24px;
-}
-
-.modalHead{
-display:flex;
-justify-content:space-between;
-align-items:center;
-margin-bottom:18px;
-}
-
-.modalHead h3{
-font-size:24px;
-}
-
-.modalHead span{
-font-size:24px;
-cursor:pointer;
-}
-
-input,
-textarea{
-width:100%;
-padding:14px;
-border:none;
-background:#f2f2f7;
-border-radius:14px;
-margin-bottom:12px;
-font-size:15px;
-outline:none;
-}
-
-textarea{
-height:100px;
-resize:none;
-}
-
-#selectedProductInfo{
-background:#f2f2f7;
-padding:14px;
-border-radius:14px;
-margin-bottom:12px;
-font-size:15px;
-line-height:1.7;
-}
-
-.mainBtn{
-width:100%;
-padding:15px;
-border:none;
-background:#111;
-color:#fff;
-border-radius:16px;
-font-size:16px;
-font-weight:700;
-cursor:pointer;
-}
-
-/* CUSTOM POPUP */
-
-.popup{
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:rgba(0,0,0,0.45);
-display:none;
-justify-content:center;
-align-items:center;
-z-index:99999;
-padding:15px;
-}
-
-.popupBox{
-background:#fff;
-width:100%;
-max-width:330px;
-padding:22px;
-border-radius:22px;
-text-align:center;
-}
-
-.popupBox p{
-font-size:18px;
-line-height:1.5;
-margin-bottom:18px;
-}
-
-.popupBox button{
-width:100%;
-padding:14px;
-border:none;
-background:#0071e3;
-color:#fff;
-border-radius:14px;
-font-size:16px;
-font-weight:700;
-}
-
-/* FOOTER */
-
-.footer{
-padding:28px 20px;
-text-align:center;
-background:#fff;
-margin-top:20px;
-}
-
-.footer p{
-font-size:14px;
-color:#666;
-margin-bottom:8px;
-}
-
-.footer a{
-text-decoration:none;
-color:#0071e3;
-font-weight:700;
-}
-
-/* MOBILE */
-
-@media(max-width:900px){
-
-.hero{
-grid-template-columns:1fr;
-}
-
-.heroText h2{
-font-size:32px;
-}
-
-.features{
-grid-template-columns:1fr;
-}
+document.getElementById("popup").style.display = "none";
 
 }
