@@ -1,1 +1,259 @@
 
+/* script.js - Airtable Connected Final */
+
+/* ===========================
+   REPLACE THESE 3 VALUES
+=========================== */
+
+const AIRTABLE_TOKEN = "PASTE_YOUR_AIRTABLE_TOKEN";
+const BASE_ID = "PASTE_YOUR_BASE_ID";
+const PRODUCTS_TABLE = "Products";
+const ORDERS_TABLE = "Orders";
+
+/* =========================== */
+
+let selectedProduct = null;
+
+/* On Load */
+
+window.onload = function(){
+loadProducts();
+showPopup("Welcome to Pak E Store");
+};
+
+/* Load Products From Airtable */
+
+async function loadProducts(){
+
+const url =
+`https://api.airtable.com/v0/${BASE_ID}/${PRODUCTS_TABLE}`;
+
+try{
+
+const res = await fetch(url,{
+headers:{
+Authorization:`Bearer ${AIRTABLE_TOKEN}`
+}
+});
+
+const data = await res.json();
+
+renderProducts(data.records);
+
+}catch(error){
+
+showPopup("Products Failed To Load");
+
+}
+
+}
+
+/* Render Products */
+
+function renderProducts(records){
+
+let html = "";
+
+for(let i=0;i<records.length;i++){
+
+const item = records[i].fields;
+
+if(item.Active !== true) continue;
+
+let img = "hero.jpg";
+
+if(item.Images && item.Images.length > 0){
+img = item.Images[0].url;
+}
+
+html += `
+<div class="productCard">
+
+<img src="${img}" class="productImg">
+
+<div class="productBody">
+
+<div class="productTitle">
+${item.Storage} ${item.Type}
+</div>
+
+<div class="productDesc">
+${item.Description || "Gaming HDD Ready To Use"}
+</div>
+
+<div class="productPrice">
+Rs ${item.Price}
+</div>
+
+<button class="buyBtn"
+onclick="openOrder(
+'${item.Storage}',
+'${item.Type}',
+'${item.Price}'
+)">
+Buy Now
+</button>
+
+</div>
+</div>
+`;
+
+}
+
+document.getElementById("productsGrid").innerHTML = html;
+
+}
+
+/* Open Order */
+
+function openOrder(storage,type,price){
+
+selectedProduct = {
+storage:storage,
+type:type,
+price:price
+};
+
+document.getElementById("selectedProductInfo").innerHTML = `
+<b>Selected Product:</b><br>
+${storage} ${type}<br>
+Price: Rs ${price}
+`;
+
+document.getElementById("orderModal").style.display = "flex";
+
+}
+
+/* Close Order */
+
+function closeOrder(){
+document.getElementById("orderModal").style.display = "none";
+}
+
+/* Submit Order */
+
+async function submitOrder(){
+
+const name =
+document.getElementById("custName").value.trim();
+
+const phone =
+document.getElementById("custPhone").value.trim();
+
+const address =
+document.getElementById("custAddress").value.trim();
+
+if(name.length < 3){
+showPopup("Please Enter Full Name");
+return;
+}
+
+if(phone.length < 11){
+showPopup("Please Enter Valid Phone Number");
+return;
+}
+
+if(address.length < 10){
+showPopup("Please Enter Complete Address");
+return;
+}
+
+if(!selectedProduct){
+showPopup("No Product Selected");
+return;
+}
+
+/* Save Order In Airtable */
+
+await saveOrderToAirtable(
+name,
+phone,
+address,
+selectedProduct.storage + " " + selectedProduct.type,
+selectedProduct.price
+);
+
+/* WhatsApp Message */
+
+let msg = "🛒 NEW ORDER RECEIVED%0A%0A";
+
+msg += "👤 Name: " + name + "%0A";
+msg += "📱 Phone: " + phone + "%0A";
+msg += "📍 Address: " + address + "%0A%0A";
+
+msg += "💽 Product: " +
+selectedProduct.storage + " " +
+selectedProduct.type + "%0A";
+
+msg += "💰 Price: Rs " +
+selectedProduct.price;
+
+window.open(
+"https://wa.me/923262281245?text=" + msg,
+"_blank"
+);
+
+closeOrder();
+
+}
+
+/* Save To Airtable */
+
+async function saveOrderToAirtable(
+name,
+phone,
+address,
+product,
+amount
+){
+
+const url =
+`https://api.airtable.com/v0/${BASE_ID}/${ORDERS_TABLE}`;
+
+const body = {
+records:[
+{
+fields:{
+Name:name,
+Phone:phone,
+Address:address,
+Product:product,
+Amount:Number(amount),
+Date:new Date().toLocaleString()
+}
+}
+]
+};
+
+try{
+
+await fetch(url,{
+method:"POST",
+headers:{
+Authorization:`Bearer ${AIRTABLE_TOKEN}`,
+"Content-Type":"application/json"
+},
+body:JSON.stringify(body)
+});
+
+}catch(error){
+console.log("Order Save Failed");
+}
+
+}
+
+/* Popup */
+
+function showPopup(text){
+
+document.getElementById("popupText").innerText = text;
+
+document.getElementById("popup").style.display = "flex";
+
+}
+
+function closePopup(){
+
+document.getElementById("popup").style.display = "none";
+
+}
