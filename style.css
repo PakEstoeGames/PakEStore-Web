@@ -1,1 +1,379 @@
 
+/* style.css - Pak E Store Premium Shopify Style */
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+scroll-behavior:smooth;
+}
+
+body{
+font-family:Arial, sans-serif;
+background:#f5f5f7;
+color:#111;
+}
+
+/* HEADER */
+
+.topbar{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:18px 20px;
+background:#fff;
+position:sticky;
+top:0;
+z-index:1000;
+box-shadow:0 2px 10px rgba(0,0,0,0.05);
+}
+
+.logoArea h1{
+font-size:26px;
+font-weight:700;
+}
+
+.logoArea p{
+font-size:13px;
+color:#777;
+margin-top:3px;
+}
+
+.shopBtn{
+text-decoration:none;
+background:#0071e3;
+color:#fff;
+padding:10px 16px;
+border-radius:12px;
+font-size:14px;
+font-weight:600;
+}
+
+/* HERO */
+
+.hero{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:20px;
+padding:35px 20px;
+align-items:center;
+}
+
+.heroText h2{
+font-size:38px;
+line-height:1.2;
+margin-bottom:15px;
+}
+
+.heroText p{
+font-size:16px;
+color:#555;
+line-height:1.7;
+margin-bottom:18px;
+}
+
+.heroBtn{
+display:inline-block;
+text-decoration:none;
+background:#111;
+color:#fff;
+padding:14px 22px;
+border-radius:14px;
+font-size:15px;
+font-weight:600;
+}
+
+.heroImage img{
+width:100%;
+border-radius:22px;
+object-fit:cover;
+}
+
+/* FEATURES */
+
+.features{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:15px;
+padding:0 20px 25px;
+}
+
+.featureCard{
+background:#fff;
+padding:16px;
+border-radius:18px;
+text-align:center;
+font-size:24px;
+box-shadow:0 4px 15px rgba(0,0,0,0.04);
+}
+
+.featureCard span{
+display:block;
+font-size:14px;
+margin-top:8px;
+font-weight:600;
+}
+
+/* SECTION HEAD */
+
+.sectionHead{
+padding:0 20px 18px;
+}
+
+.sectionHead h2{
+font-size:30px;
+margin-bottom:5px;
+}
+
+.sectionHead p{
+font-size:15px;
+color:#666;
+}
+
+/* PRODUCTS */
+
+.productsGrid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+gap:20px;
+padding:0 20px 40px;
+}
+
+.productCard{
+background:#fff;
+border-radius:22px;
+overflow:hidden;
+box-shadow:0 8px 25px rgba(0,0,0,0.06);
+transition:0.25s;
+}
+
+.productCard:hover{
+transform:translateY(-5px);
+}
+
+.productImg{
+width:100%;
+height:240px;
+object-fit:cover;
+}
+
+.productBody{
+padding:18px;
+}
+
+.productTitle{
+font-size:22px;
+font-weight:700;
+margin-bottom:6px;
+}
+
+.productDesc{
+font-size:14px;
+color:#666;
+line-height:1.6;
+margin-bottom:10px;
+min-height:42px;
+}
+
+.productPrice{
+font-size:22px;
+font-weight:700;
+margin-bottom:14px;
+}
+
+.buyBtn{
+width:100%;
+padding:14px;
+border:none;
+background:#0071e3;
+color:#fff;
+border-radius:14px;
+font-size:15px;
+font-weight:700;
+cursor:pointer;
+}
+
+/* WHY US */
+
+.whyUs{
+padding:10px 20px 45px;
+}
+
+.whyUs h2{
+font-size:28px;
+margin-bottom:20px;
+}
+
+.whyGrid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:15px;
+}
+
+.whyCard{
+background:#fff;
+padding:18px;
+border-radius:18px;
+font-size:16px;
+font-weight:600;
+box-shadow:0 4px 15px rgba(0,0,0,0.04);
+}
+
+/* MODAL */
+
+.modal{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.45);
+display:none;
+justify-content:center;
+align-items:center;
+z-index:9999;
+padding:15px;
+}
+
+.modalBox{
+background:#fff;
+width:100%;
+max-width:420px;
+padding:22px;
+border-radius:24px;
+}
+
+.modalHead{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:18px;
+}
+
+.modalHead h3{
+font-size:24px;
+}
+
+.modalHead span{
+font-size:24px;
+cursor:pointer;
+}
+
+input,
+textarea{
+width:100%;
+padding:14px;
+border:none;
+background:#f2f2f7;
+border-radius:14px;
+margin-bottom:12px;
+font-size:15px;
+outline:none;
+}
+
+textarea{
+height:100px;
+resize:none;
+}
+
+#selectedProductInfo{
+background:#f2f2f7;
+padding:14px;
+border-radius:14px;
+margin-bottom:12px;
+font-size:15px;
+line-height:1.7;
+}
+
+.mainBtn{
+width:100%;
+padding:15px;
+border:none;
+background:#111;
+color:#fff;
+border-radius:16px;
+font-size:16px;
+font-weight:700;
+cursor:pointer;
+}
+
+/* CUSTOM POPUP */
+
+.popup{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.45);
+display:none;
+justify-content:center;
+align-items:center;
+z-index:99999;
+padding:15px;
+}
+
+.popupBox{
+background:#fff;
+width:100%;
+max-width:330px;
+padding:22px;
+border-radius:22px;
+text-align:center;
+}
+
+.popupBox p{
+font-size:18px;
+line-height:1.5;
+margin-bottom:18px;
+}
+
+.popupBox button{
+width:100%;
+padding:14px;
+border:none;
+background:#0071e3;
+color:#fff;
+border-radius:14px;
+font-size:16px;
+font-weight:700;
+}
+
+/* FOOTER */
+
+.footer{
+padding:28px 20px;
+text-align:center;
+background:#fff;
+margin-top:20px;
+}
+
+.footer p{
+font-size:14px;
+color:#666;
+margin-bottom:8px;
+}
+
+.footer a{
+text-decoration:none;
+color:#0071e3;
+font-weight:700;
+}
+
+/* MOBILE */
+
+@media(max-width:900px){
+
+.hero{
+grid-template-columns:1fr;
+}
+
+.heroText h2{
+font-size:32px;
+}
+
+.features{
+grid-template-columns:1fr;
+}
+
+}
